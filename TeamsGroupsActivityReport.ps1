@@ -164,6 +164,7 @@ ForEach ($Group in $Groups) { #Because we fetched the list of groups with Get-Re
 
 # If the group is team-enabled, find the date of the last Teams conversation compliance record
 If ($TeamsList.ContainsKey($G.ExternalDirectoryObjectId) -eq $True) {
+    $TVisibility = (Get-Team -GroupId $G.ExternalDirectoryObjectId | Select Visibility)
     $TeamsEnabled = $True
     [datetime]$DateOldTeams = "1-Jun-2021" # After this date, Microsoft should have moved the old Teams data to the new location
     $CountOldTeamsData = $False
@@ -210,7 +211,9 @@ If (($TeamsEnabled -eq $True) -and ($NumberOfChats -le 100)) { Write-Host "Team-
           WhenCreated         = Get-Date ($G.WhenCreated) -Format g
           DaysOld             = $GroupAge
           NumberWarnings      = $NumberWarnings
-          Status              = $Status}
+          Status              = $Status          
+	  GroupId             = $G.ExternalDirectoryObjectId
+          Visibility          = $TVisibility}
    $Report.Add($ReportLine)   
 #End of main loop
 }
